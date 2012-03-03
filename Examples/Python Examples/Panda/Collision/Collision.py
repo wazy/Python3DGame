@@ -1,3 +1,7 @@
+# From Panda3d website, Event Example.
+# http://www.panda3d.org/manual/index.php/Event_Example
+# 3/3/2012
+
 from direct.showbase.ShowBase import ShowBase
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import Sequence, Func, Wait
