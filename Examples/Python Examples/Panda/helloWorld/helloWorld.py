@@ -9,6 +9,7 @@ from direct.task import Task
 from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import Sequence
 from panda3d.core import Point3
+from betterCamera import *
  
 class MyApp(ShowBase):
     def __init__(self):
@@ -28,7 +29,7 @@ class MyApp(ShowBase):
         self.environ.setPos(-8, 42, 0)
  
         # Add the spinCameraTask procedure to the task manager.
-        #self.taskMgr.add(self.spinCameraTask, "SpinCameraTask")
+        self.taskMgr.add(self.spinCameraTask, "SpinCameraTask")
  
         # Load and transform the panda actor.
         self.pandaActor = Actor("models/panda-model",
@@ -74,5 +75,5 @@ class MyApp(ShowBase):
         return Task.cont
 
  
-app = CameraController()
+app = MyApp()
 app.run()
