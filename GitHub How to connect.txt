@@ -1,38 +1,39 @@
-Make a GitHub account
+Make a GitHub account.
 
 http://code.google.com/p/msysgit/downloads/list
 
----Download the first one
+#Download the first one, version 1.7.9
 
-Once installed open GitBash
+#Once installed open GitBash
 
---type these commands
+#type these commands
 
 ssh-keygen -t rsa -C "your_email@youremail.com"
-----press enter
-----enter a password
-    --Do not forget this password. If you do you will be screwed. When typing the password 	will not show up, don't worry
+#press enter
+#enter a password
+#Do not forget this password. When typing the password it will not show up, but don't worry.
 
-Navagate to your \Users\-YourUserName-\.ssh
+Navagate to your C:\Users\-YourUserName-\.ssh
 	right click on the id_rsa.pub and open with notepad
 	Copy all of the information
 
-On the GitHub site Click “Account Settings” > Click “SSH Public Keys” > Click “Add another public key”
-	Paste the .ssh information here with your name in the Title and click add key
+On the GitHub site Click Account Settings -> Click SSH Public Keys -> Click Add another public key.
+	Paste the .ssh information in there with your name in the Title and click add key.
 
-**Do not type the Quotations**
 
-type "cd Desktop" and press enter
+#In the GitBash window,
 
-then type "git config --global user.name "YourFullName" and press enter
+type: cd Desktop and press enter
 
-type "git config --global user.email youremail@youremail.com" and press enter
+then type: git config --global user.name "-YourFullName-" and press enter
 
-type "git clone git://github.com/wazy/Game.git" and press enter
+type: git config --global user.email youremail@youremail.com and press enter
 
-then type "git remote add origin git@github.com:wazy/Game.git" and press enter
+type: git clone git://github.com/wazy/Game.git and press enter
 
-now type "cd Game" and press enter
+then type: git remote add origin git@github.com:wazy/Game.git and press enter
+
+now type: cd Game and press enter
 
 
 Commands you will need to add and update your files
@@ -49,7 +50,6 @@ If you add a file to the folder or make a change type these commands.
 "git push"
 
 
-
-To update an files that someone else has made you type 
+To update any files that someone else has made you type in 
 
 "git pull"
