@@ -28,7 +28,7 @@ class MyApp(ShowBase):
         self.environ.setPos(-8, 42, 0)
  
         # Add the spinCameraTask procedure to the task manager.
-        self.taskMgr.add(self.spinCameraTask, "SpinCameraTask")
+        #self.taskMgr.add(self.spinCameraTask, "SpinCameraTask")
  
         # Load and transform the panda actor.
         self.pandaActor = Actor("models/panda-model",
@@ -72,6 +72,7 @@ class MyApp(ShowBase):
         self.camera.setPos(20 * sin(angleRadians), -20.0 * cos(angleRadians), 3)
         self.camera.setHpr(angleDegrees, 0, 0)
         return Task.cont
+
  
-app = MyApp()
+app = CameraController()
 app.run()
