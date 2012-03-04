@@ -53,3 +53,8 @@ If you add a file to the folder or make a change type these commands.
 To update any files that someone else has made you type in 
 
 "git pull"
+
+If you get an error from git pull then type in
+
+git config branch.master.remote origin
+git config branch.master.merge refs/heads/master
