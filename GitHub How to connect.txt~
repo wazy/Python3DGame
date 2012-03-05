@@ -7,7 +7,7 @@ http://code.google.com/p/msysgit/downloads/list
 #Once installed open GitBash
 
 #type these commands
-dsfdsfsdf
+
 ssh-keygen -t rsa -C "your_email@youremail.com"
 #press enter
 #enter a password
