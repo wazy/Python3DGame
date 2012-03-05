@@ -21,8 +21,8 @@ class Application(ShowBase):
         self.plane = self.render2d.attachNewNode(self.cm.generate())
 
         # Load movie and its sound (if it has sound).
-        self.movie = self.loader.loadTexture("videos/loading_screen.flv")
-        self.sound = self.loader.loadSfx("videos/loading_screen.flv")
+        self.movie = self.loader.loadTexture("videos/loading_screen.mp4")
+        self.sound = self.loader.loadSfx("videos/loading_screen.mp4")
 
         # Load movie into the texture plane.
         self.plane.setTexture(self.movie)
