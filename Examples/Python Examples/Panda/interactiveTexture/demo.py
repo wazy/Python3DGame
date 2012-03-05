@@ -87,7 +87,7 @@ class world(object):
 	def setText(self):
 		bk_text = "Button Clicked"
 		self.textObject.setText(bk_text)
-	
+
 	def directButtonSample(self):
 		# Add some text
 		bk_text = "This is my Demo"
