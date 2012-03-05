@@ -9,7 +9,6 @@ from direct.task import Task
 from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import Sequence
 from panda3d.core import Point3
-from betterCamera import *
  
 class MyApp(ShowBase):
     def __init__(self):
@@ -20,9 +19,10 @@ class MyApp(ShowBase):
  
         # Load the environment model and the sound file.
         self.environ = self.loader.loadModel("models/environment")
-        self.mySound = self.loader.loadSfx("Sounds/ocean/Ocean_Seagull.mp3")
+        self.mySound = self.loader.loadSfx("Sounds/Ocean_Seagulls_Wind.ogg")
 	# Reparent the model to render.
         self.environ.reparentTo(self.render)
+        self.mySound.play()
 
         # Apply scale and position transforms on the model.
         self.environ.setScale(0.25, 0.25, 0.25)
