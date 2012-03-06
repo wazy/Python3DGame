@@ -34,8 +34,9 @@ def addTitle(text):
 class World(DirectObject):
 
     def __init__(self):
-        
-        self.keyMap = {"left":0, "right":0, "forward":0, "cam-left":0, "cam-right":0, "jump":0}
+
+        ## Add the default value to the dictionary.
+        self.keyMap = {"left":0, "right":0, "forward":0, "jump":0, "cam-left":0, "cam-right":0}
         base.win.setClearColor(Vec4(0,0,0,1))
 
         # Post the instructions
@@ -87,6 +88,10 @@ class World(DirectObject):
         self.accept("arrow_left", self.setKey, ["left",1])
         self.accept("arrow_right", self.setKey, ["right",1])
         self.accept("arrow_up", self.setKey, ["forward",1])
+        self.accept("j", self.setKey, ["jump",1])
+        
+        ## -up to signify what happens when you let go of the key
+        self.accept("j-up", self.setKey, ["jump",0])
         self.accept("a", self.setKey, ["cam-left",1])
         self.accept("s", self.setKey, ["cam-right",1])
         self.accept("arrow_left-up", self.setKey, ["left",0])
@@ -94,7 +99,6 @@ class World(DirectObject):
         self.accept("arrow_up-up", self.setKey, ["forward",0])
         self.accept("a-up", self.setKey, ["cam-left",0])
         self.accept("s-up", self.setKey, ["cam-right",0])
-        self.accept("j", self.setKey, ["jump",1])
 
         taskMgr.add(self.move,"moveTask")
 
@@ -186,13 +190,18 @@ class World(DirectObject):
             self.ralph.setH(self.ralph.getH() - 300 * globalClock.getDt())
         if (self.keyMap["forward"]!=0):
             self.ralph.setY(self.ralph, -25 * globalClock.getDt())
+        ## What to do if j was pressed?
         if (self.keyMap["jump"]!=0):
-            self.ralph.setZ(self.ralph, -25 * globalClock.getDt())
+            self.ralph.setY(self.ralph, -75 * globalClock.getDt())
 
         # If ralph is moving, loop the run animation.
         # If he is standing still, stop the animation.
+        
+        # Function to make Ralph jump up the y-axis and fall back down 
+        # when 'j' is released
 
-        if (self.keyMap["forward"]!=0) or (self.keyMap["left"]!=0) or (self.keyMap["right"]!=0):
+        ## Add jump to the animation alteration conditions here.
+        if (self.keyMap["forward"]!=0) or (self.keyMap["left"]!=0) or (self.keyMap["right"]!=0) or (self.keyMap["jump"]!=0):
             if self.isMoving is False:
                 self.ralph.loop("run")
                 self.isMoving = True
@@ -200,19 +209,6 @@ class World(DirectObject):
             if self.isMoving:
                 self.ralph.stop()
                 self.ralph.pose("walk",5)
-                self.isMoving = False
-
-        # Function to make Ralph jump up the z-axis and fall back down 
-        # when 'j' is released
-
-        if (self.keyMap["jump"]!=0):
-            if self.isMoving is False:
-                self.ralph.loop("run")
-                self.isMoving = True
-        else:
-            if self.isMoving:
-                self.ralph.stop()										# Error with the stop function
-                self.ralph.pose("walk",5)								# Ralph does not fall back down
                 self.isMoving = False
 
         # If the camera is too far from ralph, move it closer.
