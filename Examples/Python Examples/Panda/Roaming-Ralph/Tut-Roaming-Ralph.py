@@ -36,7 +36,7 @@ class World(DirectObject):
     def __init__(self):
 
         ## Add the default value to the dictionary.
-        self.keyMap = {"left":0, "right":0, "forward":0, "jump":0, "cam-left":0, "cam-right":0}
+        self.keyMap = {"left":0, "right":0, "forward":0, "boost":0, "strafeL":0, "strafeR":0, "cam-left":0, "cam-right":0}
         base.win.setClearColor(Vec4(0,0,0,1))
 
         # Post the instructions
@@ -47,8 +47,10 @@ class World(DirectObject):
         self.inst3 = addInstructions(0.85, "[Right Arrow]: Rotate Ralph Right")
         self.inst4 = addInstructions(0.80, "[Up Arrow]: Run Ralph Forward")
         self.inst6 = addInstructions(0.70, "[A]: Rotate Camera Left")
-        self.inst7 = addInstructions(0.65, "[S]: Rotate Camera Right")
-        self.inst8 = addInstructions(0.60, "[J]: Ralph Jump")
+        self.inst7 = addInstructions(0.65, "[D]: Rotate Camera Right")
+        self.inst8 = addInstructions(0.60, "[B]: Ralph Boost")
+        self.inst9 = addInstructions(0.55, "[V]: Strafe Left")
+        self.inst10 = addInstructions(0.50, "[N]: Strafe Right")
         
         # Set up the environment
         #
@@ -88,17 +90,21 @@ class World(DirectObject):
         self.accept("arrow_left", self.setKey, ["left",1])
         self.accept("arrow_right", self.setKey, ["right",1])
         self.accept("arrow_up", self.setKey, ["forward",1])
-        self.accept("j", self.setKey, ["jump",1])
+        self.accept("a", self.setKey, ["cam-left",1])
+        self.accept("d", self.setKey, ["cam-right",1])
+        self.accept("b", self.setKey, ["boost",1])
+        self.accept("v", self.setKey, ["strafeL",1])
+        self.accept("n", self.setKey, ["strafeR",1])
         
         ## -up to signify what happens when you let go of the key
-        self.accept("j-up", self.setKey, ["jump",0])
-        self.accept("a", self.setKey, ["cam-left",1])
-        self.accept("s", self.setKey, ["cam-right",1])
+        self.accept("b-up", self.setKey, ["boost",0])
+        self.accept("v-up", self.setKey, ["strafeL",0])
+        self.accept("n-up", self.setKey, ["strafeR",0])
         self.accept("arrow_left-up", self.setKey, ["left",0])
         self.accept("arrow_right-up", self.setKey, ["right",0])
         self.accept("arrow_up-up", self.setKey, ["forward",0])
         self.accept("a-up", self.setKey, ["cam-left",0])
-        self.accept("s-up", self.setKey, ["cam-right",0])
+        self.accept("d-up", self.setKey, ["cam-right",0])
 
         taskMgr.add(self.move,"moveTask")
 
@@ -173,9 +179,9 @@ class World(DirectObject):
 
         base.camera.lookAt(self.ralph)
         if (self.keyMap["cam-left"]!=0):
-            base.camera.setX(base.camera, -20 * globalClock.getDt())
+            base.camera.setX(base.camera, -50 * globalClock.getDt()) # Increased camera rotation speed to match rotation speed of Ralph
         if (self.keyMap["cam-right"]!=0):
-            base.camera.setX(base.camera, +20 * globalClock.getDt())
+            base.camera.setX(base.camera, +50 * globalClock.getDt())
 
         # save ralph's initial position so that we can restore it,
         # in case he falls off the map or runs into something.
@@ -190,9 +196,19 @@ class World(DirectObject):
             self.ralph.setH(self.ralph.getH() - 300 * globalClock.getDt())
         if (self.keyMap["forward"]!=0):
             self.ralph.setY(self.ralph, -25 * globalClock.getDt())
-        ## What to do if j was pressed?
-        if (self.keyMap["jump"]!=0):
+        ## What to do if b was pressed?
+        if (self.keyMap["boost"]!=0):
             self.ralph.setY(self.ralph, -75 * globalClock.getDt())
+        # What to do if n is pressed
+        # Ralph will strafe right. If b is also pressed, Ralph will strafe to the right quicker
+        if (self.keyMap["strafeR"]!=0):
+			self.ralph.setX(self.ralph, -25 * globalClock.getDt())
+			if (self.keyMap["boost"]!=0):
+				self.ralph.setX(self.ralph, -75 * globalClock.getDt())
+        if (self.keyMap["strafeL"]!=0):
+			self.ralph.setX(self.ralph, 25 * globalClock.getDt())
+			if (self.keyMap["boost"]!=0):
+				self.ralph.setX(self.ralph, 75 * globalClock.getDt())
 
         # If ralph is moving, loop the run animation.
         # If he is standing still, stop the animation.
@@ -200,8 +216,8 @@ class World(DirectObject):
         # Function to make Ralph jump up the y-axis and fall back down 
         # when 'j' is released
 
-        ## Add jump to the animation alteration conditions here.
-        if (self.keyMap["forward"]!=0) or (self.keyMap["left"]!=0) or (self.keyMap["right"]!=0) or (self.keyMap["jump"]!=0):
+        ## Add boost, strafeL, and strafeR to the animation alteration conditions here.
+        if (self.keyMap["forward"]!=0) or (self.keyMap["left"]!=0) or (self.keyMap["right"]!=0) or (self.keyMap["boost"]!=0) or (self.keyMap["strafeL"]!=0) or (self.keyMap["strafeR"]!=0):
             if self.isMoving is False:
                 self.ralph.loop("run")
                 self.isMoving = True
