@@ -19,6 +19,12 @@ from direct.actor.Actor import Actor
 from direct.showbase.DirectObject import DirectObject
 import random, sys, os, math
 
+## Loading Screen
+from direct.gui.OnscreenText import OnscreenText,TextNode 
+loadingText=OnscreenText("Loading...",1,fg=(1,1,1,1),pos=(0,0),align=TextNode.ACenter,scale=.07,mayChange=1) 
+base.graphicsEngine.renderFrame() #render a frame otherwise the screen will remain black 
+base.graphicsEngine.renderFrame() #idem dito
+
 SPEED = 0.5
 
 # Function to put instructions on the screen.
@@ -65,6 +71,8 @@ class World(DirectObject):
         self.environ = loader.loadModel("models/world")      
         self.environ.reparentTo(render)
         self.environ.setPos(0,0,0)
+        ## Remove loading screen after world is rendered and ready to go.
+        loadingText.cleanup()
         
         # Create the main character, Ralph
 
