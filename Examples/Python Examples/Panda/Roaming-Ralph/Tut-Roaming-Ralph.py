@@ -40,7 +40,9 @@ def addTitle(text):
 class World(DirectObject):
 
     def __init__(self):
-
+		###Adds the Sound to the load screen
+        self.mySound = base.loader.loadSfx("sounds/Metal_Intro_Song.ogg")
+        self.mySound.play()
         ## Add the default value to the dictionary.
         self.keyMap = {"left":0, "right":0, "forward":0, "jump":0, "cam-left":0, "cam-right":0}
         base.win.setClearColor(Vec4(0,0,0,1))
@@ -71,6 +73,9 @@ class World(DirectObject):
         self.environ = loader.loadModel("models/world")      
         self.environ.reparentTo(render)
         self.environ.setPos(0,0,0)
+        ###Stops the sound as soon as the world renders 
+        ###Note:Sound won't play very long becasue the game takes seconds to compile and load
+        self.mySound.stop()
         ## Remove loading screen after world is rendered and ready to go.
         loadingText.cleanup()
         
