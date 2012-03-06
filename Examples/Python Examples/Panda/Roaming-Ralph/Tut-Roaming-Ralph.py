@@ -19,6 +19,12 @@ from direct.actor.Actor import Actor
 from direct.showbase.DirectObject import DirectObject
 import random, sys, os, math
 
+## Loading Screen
+from direct.gui.OnscreenText import OnscreenText,TextNode 
+loadingText=OnscreenText("Loading...",1,fg=(1,1,1,1),pos=(0,0),align=TextNode.ACenter,scale=.07,mayChange=1) 
+base.graphicsEngine.renderFrame() #render a frame otherwise the screen will remain black 
+base.graphicsEngine.renderFrame() #idem dito
+
 SPEED = 0.5
 
 # Function to put instructions on the screen.
@@ -34,7 +40,9 @@ def addTitle(text):
 class World(DirectObject):
 
     def __init__(self):
-
+		###Adds the Sound to the load screen
+        self.mySound = base.loader.loadSfx("sounds/Metal_Intro_Song.ogg")
+        self.mySound.play()
         ## Add the default value to the dictionary.
         self.keyMap = {"left":0, "right":0, "forward":0, "boost":0, "strafeL":0, "strafeR":0, "cam-left":0, "cam-right":0}
         base.win.setClearColor(Vec4(0,0,0,1))
@@ -67,6 +75,11 @@ class World(DirectObject):
         self.environ = loader.loadModel("models/world")      
         self.environ.reparentTo(render)
         self.environ.setPos(0,0,0)
+        ###Stops the sound as soon as the world renders 
+        ###Note:Sound won't play very long becasue the game takes seconds to compile and load
+        self.mySound.stop()
+        ## Remove loading screen after world is rendered and ready to go.
+        loadingText.cleanup()
         
         # Create the main character, Ralph
 
