@@ -77,10 +77,9 @@ class World(DirectObject):
         self.environ.setPos(0,0,0)
         ###Stops the sound as soon as the world renders 
         ###Note:Sound won't play very long becasue the game takes seconds to compile and load
-        self.mySound.stop()
         ## Remove loading screen after world is rendered and ready to go.
         loadingText.cleanup()
-        
+        self.mySound.stop()
         # Create the main character, Ralph
 
         ralphStartPos = self.environ.find("**/start_point").getPos()
@@ -215,13 +214,13 @@ class World(DirectObject):
         # What to do if n is pressed
         # Ralph will strafe right. If b is also pressed, Ralph will strafe to the right quicker
         if (self.keyMap["strafeR"]!=0):
-			self.ralph.setX(self.ralph, -25 * globalClock.getDt())
-			if (self.keyMap["boost"]!=0):
-				self.ralph.setX(self.ralph, -75 * globalClock.getDt())
+            self.ralph.setX(self.ralph, -25 * globalClock.getDt())
+        if (self.keyMap["boost"]!=0):
+            self.ralph.setX(self.ralph, -75 * globalClock.getDt())
         if (self.keyMap["strafeL"]!=0):
-			self.ralph.setX(self.ralph, 25 * globalClock.getDt())
-			if (self.keyMap["boost"]!=0):
-				self.ralph.setX(self.ralph, 75 * globalClock.getDt())
+            self.ralph.setX(self.ralph, 25 * globalClock.getDt())
+        if (self.keyMap["boost"]!=0):
+            self.ralph.setX(self.ralph, 75 * globalClock.getDt())
 
         # If ralph is moving, loop the run animation.
         # If he is standing still, stop the animation.

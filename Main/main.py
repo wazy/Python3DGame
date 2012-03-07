@@ -3,6 +3,7 @@
 
 # Standard imports for Panda3d.
 from direct.showbase.ShowBase import ShowBase
+from direct.gui.OnscreenText import OnscreenText,TextNode 
 from panda3d.core import *
 
 # This may not be necessary but configures Panda to use OpenAL.
@@ -38,6 +39,11 @@ class Application(ShowBase):
 
         # Play the sound.
         self.sound.play()
+
+        self.movie.cleanup()
+        self.loadingText=OnscreenText("Loading...",1,fg=(1,1,1,1),pos=(0,0),align=TextNode.ACenter,scale=.07,mayChange=1) 
+        self.graphicsEngine.renderFrame() #render a frame otherwise the screen will remain black 
+        self.graphicsEngine.renderFrame() #idem dito
 
 # Assign the class to a variable.        
 app = Application()
