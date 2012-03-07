@@ -40,7 +40,6 @@ class Application(ShowBase):
         # Play the sound.
         self.sound.play()
 
-        self.movie.cleanup()
         self.loadingText=OnscreenText("Loading...",1,fg=(1,1,1,1),pos=(0,0),align=TextNode.ACenter,scale=.07,mayChange=1) 
         self.graphicsEngine.renderFrame() #render a frame otherwise the screen will remain black 
         self.graphicsEngine.renderFrame() #idem dito
