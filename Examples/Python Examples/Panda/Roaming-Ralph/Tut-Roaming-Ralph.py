@@ -21,9 +21,15 @@ import random, sys, os, math
 
 ## Loading Screen
 from direct.gui.OnscreenText import OnscreenText,TextNode 
-loadingText=OnscreenText("Loading...",1,fg=(1,1,1,1),pos=(0,0),align=TextNode.ACenter,scale=.07,mayChange=1) 
+loadingText=OnscreenText("Loading...",1,fg=(1,1,1,1),pos=(0,0), \
+                         align=TextNode.ACenter,scale=.07,mayChange=1) 
 base.graphicsEngine.renderFrame() #render a frame otherwise the screen will remain black 
 base.graphicsEngine.renderFrame() #idem dito
+base.setFrameRateMeter(True)
+
+## Adds Sound.
+mySound = base.loader.loadSfx("sounds/Metal_Intro_Song.ogg")
+mySound.play()
 
 SPEED = 0.5
 
@@ -40,15 +46,15 @@ def addTitle(text):
 class World(DirectObject):
 
     def __init__(self):
-		###Adds the Sound to the load screen
-        self.mySound = base.loader.loadSfx("sounds/Metal_Intro_Song.ogg")
-        self.mySound.play()
-        ## Add the default value to the dictionary.
-        self.keyMap = {"left":0, "right":0, "forward":0, "boost":0, "strafeL":0, "strafeR":0, "cam-left":0, "cam-right":0}
+        
+        ## Add the default values to the dictionary.
+        self.keyMap = {"left":0, "right":0, "forward":0, \
+                       "boost":0, "strafeL":0, "strafeR":0, \
+                       "cam-left":0, "cam-right":0}
+        
         base.win.setClearColor(Vec4(0,0,0,1))
 
         # Post the instructions
-
         self.title = addTitle("Panda3D Tutorial: Roaming Ralph (Walking on Uneven Terrain)")
         self.inst1 = addInstructions(0.95, "[ESC]: Quit")
         self.inst2 = addInstructions(0.90, "[Left Arrow]: Rotate Ralph Left")
@@ -75,11 +81,14 @@ class World(DirectObject):
         self.environ = loader.loadModel("models/world")      
         self.environ.reparentTo(render)
         self.environ.setPos(0,0,0)
-        ###Stops the sound as soon as the world renders 
-        ###Note:Sound won't play very long becasue the game takes seconds to compile and load
+        
+        ## Stops the sound as soon as the world renders 
+        ## Note:Sound won't play very long becasue the game takes seconds to compile and load
         ## Remove loading screen after world is rendered and ready to go.
+        
         loadingText.cleanup()
-        self.mySound.stop()
+        mySound.stop()
+        
         # Create the main character, Ralph
 
         ralphStartPos = self.environ.find("**/start_point").getPos()
@@ -176,6 +185,7 @@ class World(DirectObject):
         directionalLight.setSpecularColor(Vec4(1, 1, 1, 1))
         render.setLight(render.attachNewNode(ambientLight))
         render.setLight(render.attachNewNode(directionalLight))
+
     
     #Records the state of the arrow keys
     def setKey(self, key, value):
@@ -191,7 +201,9 @@ class World(DirectObject):
 
         base.camera.lookAt(self.ralph)
         if (self.keyMap["cam-left"]!=0):
-            base.camera.setX(base.camera, -50 * globalClock.getDt()) # Increased camera rotation speed to match rotation speed of Ralph
+            base.camera.setX(base.camera, -50 * globalClock.getDt())
+            
+        # Increased camera rotation speed to match rotation speed of Ralph
         if (self.keyMap["cam-right"]!=0):
             base.camera.setX(base.camera, +50 * globalClock.getDt())
 
@@ -229,7 +241,9 @@ class World(DirectObject):
         # when 'j' is released
 
         ## Add boost, strafeL, and strafeR to the animation alteration conditions here.
-        if (self.keyMap["forward"]!=0) or (self.keyMap["left"]!=0) or (self.keyMap["right"]!=0) or (self.keyMap["boost"]!=0) or (self.keyMap["strafeL"]!=0) or (self.keyMap["strafeR"]!=0):
+        if (self.keyMap["forward"]!=0) or (self.keyMap["left"]!=0) \
+           or (self.keyMap["right"]!=0) or (self.keyMap["boost"]!=0) \
+           or (self.keyMap["strafeL"]!=0) or (self.keyMap["strafeR"]!=0):
             if self.isMoving is False:
                 self.ralph.loop("run")
                 self.isMoving = True
