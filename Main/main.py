@@ -43,7 +43,24 @@ class Application(ShowBase):
         self.loadingText=OnscreenText("Loading...",1,fg=(1,1,1,1),pos=(0,0),align=TextNode.ACenter,scale=.07,mayChange=1) 
         self.graphicsEngine.renderFrame() #render a frame otherwise the screen will remain black 
         self.graphicsEngine.renderFrame() #idem dito
-
+		
+        self.image = self.loadImageAsPlane('models/Fireworks.jpg')
+        taskMgr.doMethodLater(14,self.image.reparentTo(aspect2d),"ImageLoader")
+        taskMgr.doMethodLater(14,self.image.setTransparency(TransparencyAttrib.MAlpha),"ImageTrans")
+		
+    def loadImageAsPlane(self, task, filepath, yresolution = 600): 
+		#Load image as 3d plane; Arguments: filepath -- image file path yresolution -- pixel-perfect width resolution 
+		self.tex = loader.loadTexture(filepath) 
+		self.tex.setBorderColor(Vec4(0,0,0,0)) 
+		self.tex.setWrapU(Texture.WMBorderColor)
+		self.tex.setWrapV(Texture.WMBorderColor)
+		self.cm2 = CardMaker(filepath + ' card')
+		self.cm2.setFrame(-self.tex.getOrigFileXSize(), self.tex.getOrigFileXSize(), -self.tex.getOrigFileYSize(), self.tex.getOrigFileYSize())
+		self.card = NodePath(self.cm2.generate())
+		self.card.setTexture(self.tex)
+		self.card.setScale(self.card.getScale()/ yresolution)
+		self.card.flattenLight() # apply scale
+		return self.card, task.cont 
 # Assign the class to a variable.        
 app = Application()
 # And finally, run it!!
