@@ -3,8 +3,12 @@
 
 # Standard imports for Panda3d.
 from direct.showbase.ShowBase import ShowBase
-from direct.gui.OnscreenText import OnscreenText,TextNode 
+from direct.gui.OnscreenText import OnscreenText,TextNode
+from direct.task import Task
+from direct.task.Task import Task 
 from panda3d.core import *
+from pandac.PandaModules import Texture, TextureStage, CardMaker
+from direct.gui.OnscreenImage import OnscreenImage
 
 # This may not be necessary but configures Panda to use OpenAL.
 #loadPrcFileData("", "audio-library-name p3openal_audio")
@@ -39,28 +43,19 @@ class Application(ShowBase):
 
         # Play the sound.
         self.sound.play()
+        
 
         self.loadingText=OnscreenText("Loading...",1,fg=(1,1,1,1),pos=(0,0),align=TextNode.ACenter,scale=.07,mayChange=1) 
         self.graphicsEngine.renderFrame() #render a frame otherwise the screen will remain black 
         self.graphicsEngine.renderFrame() #idem dito
+
+        taskMgr.doMethodLater(14,self.loadImageAsPlane,"ImageLoader")
 		
-        self.image = self.loadImageAsPlane('models/Fireworks.jpg')
-        taskMgr.doMethodLater(14,self.image.reparentTo(aspect2d),"ImageLoader")
-        taskMgr.doMethodLater(14,self.image.setTransparency(TransparencyAttrib.MAlpha),"ImageTrans")
-		
-    def loadImageAsPlane(self, task, filepath, yresolution = 600): 
+    def loadImageAsPlane(self, task): 
 		#Load image as 3d plane; Arguments: filepath -- image file path yresolution -- pixel-perfect width resolution 
-		self.tex = loader.loadTexture(filepath) 
-		self.tex.setBorderColor(Vec4(0,0,0,0)) 
-		self.tex.setWrapU(Texture.WMBorderColor)
-		self.tex.setWrapV(Texture.WMBorderColor)
-		self.cm2 = CardMaker(filepath + ' card')
-		self.cm2.setFrame(-self.tex.getOrigFileXSize(), self.tex.getOrigFileXSize(), -self.tex.getOrigFileYSize(), self.tex.getOrigFileYSize())
-		self.card = NodePath(self.cm2.generate())
-		self.card.setTexture(self.tex)
-		self.card.setScale(self.card.getScale()/ yresolution)
-		self.card.flattenLight() # apply scale
-		return self.card, task.cont 
+        b = OnscreenImage(parent=render2d, image='models/Fireworks.jpg')
+        
+        
 # Assign the class to a variable.        
 app = Application()
 # And finally, run it!!
