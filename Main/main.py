@@ -3,12 +3,15 @@
 
 # Standard imports for Panda3d.
 from direct.showbase.ShowBase import ShowBase
-from direct.gui.OnscreenText import OnscreenText,TextNode
-from direct.task import Task
 from direct.task.Task import Task 
 from panda3d.core import *
-from pandac.PandaModules import Texture, TextureStage, CardMaker
 from direct.gui.OnscreenImage import OnscreenImage
+from direct.gui.OnscreenText import OnscreenText
+from panda3d.core import *
+from direct.gui.DirectGui import *
+
+#import direct.directbase.DirectStart
+import sys
 
 # This may not be necessary but configures Panda to use OpenAL.
 #loadPrcFileData("", "audio-library-name p3openal_audio")
@@ -44,16 +47,28 @@ class Application(ShowBase):
         # Play the sound.
         self.sound.play()
         
+        # Schedule it to happen 10 seconds later.
+        taskMgr.doMethodLater(10, self.loadImageAsPlane, "ImageLoader")
 
-        self.loadingText=OnscreenText("Loading...",1,fg=(1,1,1,1),pos=(0,0),align=TextNode.ACenter,scale=.07,mayChange=1) 
-        self.graphicsEngine.renderFrame() #render a frame otherwise the screen will remain black 
-        self.graphicsEngine.renderFrame() #idem dito
+        self.accept("escape", sys.exit)
 
-        taskMgr.doMethodLater(14,self.loadImageAsPlane,"ImageLoader")
+
+        self.background_text = ""
+        self.backgroundText = OnscreenText(self.background_text, pos = (0.95,-0.95) , 
+                                      scale = 0.07, fg = (1,0.5,0.5,1), align = TextNode.ACenter, 
+                                      mayChange = 1)
+        
+        # Let's add a button..
+        self.button = DirectButton(text = ("New Game", None, None, None),
+                                   pressEffect = 1, scale = .05, command = self.setText)
+
+    def setText(self):
+        self.background_text = "Thy journey has begun..."
+        self.backgroundText.setText(self.background_text)
 		
     def loadImageAsPlane(self, task): 
-		#Load image as 3d plane; Arguments: filepath -- image file path yresolution -- pixel-perfect width resolution 
-        b = OnscreenImage(parent=render2d, image='models/Fireworks.jpg')
+	# Load image and put onscreen 
+        background = OnscreenImage(parent=render2d, image='models/Fireworks.jpg')
         
         
 # Assign the class to a variable.        
