@@ -1,5 +1,5 @@
 Make a GitHub account.
-sdfasdf
+
 http://code.google.com/p/msysgit/downloads/list
 
 #Download the first one, version 1.7.9
