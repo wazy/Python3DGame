@@ -39,16 +39,15 @@ class Application(ShowBase):
         self.plane.setTexScale(TextureStage.getDefault(), self.movie.getTexScale())
 
         # 0 means do not loop infinitely.
-        self.movie.setLoop(0)
+        self.movie.setLoop(1)
 
         # If it has sound, synchronize it to the video.
         self.movie.synchronizeTo(self.sound)
 
+        # Will set the Sound to loop.
+        self.sound.setLoopCount(0)
         # Play the sound.
         self.sound.play()
-        
-        # Schedule it to happen 10 seconds later.
-        taskMgr.doMethodLater(10, self.loadImageAsPlane, "ImageLoader")
 
         self.accept("escape", sys.exit)
 
@@ -65,6 +64,10 @@ class Application(ShowBase):
     def setText(self):
         self.background_text = "Thy journey has begun..."
         self.backgroundText.setText(self.background_text)
+        # Schedule it to happen 0.1 seconds later.
+        taskMgr.doMethodLater(0.1, self.loadImageAsPlane, "ImageLoader")
+        #Will stop the sound if the button is pressed.
+        self.sound.stop()
 		
     def loadImageAsPlane(self, task): 
 	# Load image and put onscreen 
