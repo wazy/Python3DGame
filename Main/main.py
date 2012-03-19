@@ -9,6 +9,8 @@ from panda3d.core import *
 from direct.gui.OnscreenImage import OnscreenImage
 from direct.gui.OnscreenText import OnscreenText
 from direct.gui.DirectGui import *
+# Custom import.
+from FirstPersonCamera import FirstPersonCamera 
 
 
 import sys
@@ -57,7 +59,7 @@ class Application(ShowBase):
         self.accept("escape", sys.exit)
 
 
-        """ To do, implement text above model """
+        """ To do, implement text below model """
         #self.background_text = "Health"
         #self.backgroundText = OnscreenText(self.background_text, pos = (0.95,-0.95) , 
                                      # scale = 0.07, fg = (1,0.5,0.5,1), align = TextNode.ACenter, 
@@ -82,6 +84,8 @@ class Application(ShowBase):
         self.firstModel.setPos(0, 50, 0)
         self.firstModel.setTexture(self.firstTexture)
         
+        # The Camera.
+        self.mouseLook = FirstPersonCamera(self, self.cam, self.render)  
         # Will stop the sound if the button is pressed.
         self.sound.stop()
 		
