@@ -40,7 +40,7 @@ class Application(ShowBase):
         self.plane.setTexScale(TextureStage.getDefault(), self.movie.getTexScale())
 
         # 0 means do not loop infinitely.
-        self.movie.setLoop(1)
+        self.movie.setLoop(0)
 
         # If it has sound, synchronize it to the video.
         self.movie.synchronizeTo(self.sound)
@@ -67,8 +67,9 @@ class Application(ShowBase):
         #self.background_text = "Thy journey has begun..."
         #self.backgroundText.setText(self.background_text)
 
-        # Remove the button and the background image.
-        self.button.destroy()
+        # Remove the buttons and the background image.
+        self.newGameButton.destroy()
+        self.loadSavedGameButton.destroy()
         self.background.removeNode()
 
         # Set 3d background color.
@@ -89,8 +90,14 @@ class Application(ShowBase):
         self.background = OnscreenImage(parent=render2d, image='images/Fireworks.jpg')
 
         # Let's add a button..
-        self.button = DirectButton(text = ("New Game", None, None, None),
+        self.newGameButton = DirectButton(text = ("New Game", None, None, None),
                                    pressEffect = 1, scale = .05, command = self.loadWorld)
+
+        self.loadSavedGameButton = DirectButton(text = ("Load Game", None, None, None),
+                                   pressEffect = 1, scale = .05, command = self.loadWorld)
+        
+        self.newGameButton.setPos(-1,1,-0.1)
+        self.loadSavedGameButton.setPos(-1,1,-0.2)
         
         # Removes Intro Movie.
         self.plane.removeNode()
