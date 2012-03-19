@@ -19,7 +19,7 @@ class Application(ShowBase):
         ShowBase.__init__(self)
 
         # Loads everything here.
-        self.firstModel = self.loader.loadModel("models/proofOfConcept.obj")
+        self.firstModel = self.loader.loadModel("models/proofOfConcept.egg")
         self.firstTexture = self.loader.loadTexture("images/proofOfConceptTexture.png")
         
         # Load movie and its sound (if it has sound).
