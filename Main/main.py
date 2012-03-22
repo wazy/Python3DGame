@@ -9,13 +9,14 @@ from panda3d.core import *
 from direct.gui.OnscreenImage import OnscreenImage
 from direct.gui.OnscreenText import OnscreenText
 from direct.gui.DirectGui import *
+from UserInputConrol import *
+
 # Custom import.
 from FirstPersonCamera import FirstPersonCamera 
 
-
 import sys
 
-class Application(ShowBase):
+class Application(ShowBase, UserInputControl):
     def __init__(self):
         # Always add this!!! To load/render/etc.
         ShowBase.__init__(self)
@@ -54,6 +55,9 @@ class Application(ShowBase):
 
         # Schedule bg image to show 10 seconds later.
         taskMgr.doMethodLater(10, self.loadImageAsPlane, "ImageLoader")
+        hello = UserInputControl()
+        
+        taskMgr.add(hello.allFunctions, "moveTask")
 
         """ To do, add more commands """
         self.accept("escape", sys.exit)
@@ -88,6 +92,7 @@ class Application(ShowBase):
         self.mouseLook = FirstPersonCamera(self, self.cam, self.render)  
         # Will stop the sound if the button is pressed.
         self.sound.stop()
+		
 		
     def loadImageAsPlane(self, task): 
 	# Loads image and puts it onscreen. 
