@@ -1,6 +1,6 @@
 ## Version 0.01
 ## Last change:
-## 1:40 AM 3/16/2012
+## 21:40 3/22/2012
 
 # Standard imports for Panda3d.
 from direct.showbase.ShowBase import ShowBase
@@ -9,14 +9,14 @@ from panda3d.core import *
 from direct.gui.OnscreenImage import OnscreenImage
 from direct.gui.OnscreenText import OnscreenText
 from direct.gui.DirectGui import *
-from UserInputConrol import *
+from UserInputControl import *
 
 # Custom import.
 from FirstPersonCamera import FirstPersonCamera 
 
 import sys
 
-class Application(ShowBase, UserInputControl):
+class Application(ShowBase):
     def __init__(self):
         # Always add this!!! To load/render/etc.
         ShowBase.__init__(self)

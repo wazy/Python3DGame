@@ -44,3 +44,4 @@ class UserInputControl(DirectObject.DirectObject):
 	def allFunctions(self, task):
 		self.acceptKeys()
 		self.move()
+		return task.cont
