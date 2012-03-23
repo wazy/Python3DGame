@@ -20,6 +20,9 @@ class Application(ShowBase):
     def __init__(self):
         # Always add this!!! To load/render/etc.
         ShowBase.__init__(self)
+        me = UserInputControl()
+        keys = Keys()
+        taskMgr.add(me.move,"movement", extraArgs = [keys])
 
         # Loads everything here.
         self.firstModel = self.loader.loadModel("models/proofOfConcept.egg")
@@ -54,13 +57,11 @@ class Application(ShowBase):
         self.sound.play()
 
         # Schedule bg image to show 10 seconds later.
-        taskMgr.doMethodLater(10, self.loadImageAsPlane, "ImageLoader")
-        hello = UserInputControl()
+        taskMgr.doMethodLater(1, self.loadImageAsPlane, "ImageLoader")
         
-        taskMgr.add(hello.allFunctions, "moveTask")
 
         """ To do, add more commands """
-        self.accept("escape", sys.exit)
+        #self.accept("escape", sys.exit)
 
 
         """ To do, implement text below model """
