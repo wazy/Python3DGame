@@ -25,8 +25,8 @@ class Application(ShowBase):
         taskMgr.add(me.move,"movement", extraArgs = [keys])
 
         # Loads everything here.
-        self.firstModel = self.loader.loadModel("models/proofOfConcept.egg")
-        self.firstTexture = self.loader.loadTexture("images/proofOfConceptTexture.png")
+        self.firstModel = self.loader.loadModel("models/dragontail.x")
+        #self.firstTexture = self.loader.loadTexture("images/dragontail.tga")
         
         # Load movie and its sound (if it has sound).
         self.movie = self.loader.loadTexture("videos/loading_screen.ogm")
@@ -87,7 +87,7 @@ class Application(ShowBase):
         self.firstModel.reparentTo(self.render)
         self.firstModel.setScale(0.75, 0.75, 0.75)
         self.firstModel.setPos(0, 50, 0)
-        self.firstModel.setTexture(self.firstTexture)
+        #self.firstModel.setTexture(self.firstTexture)
         
         # The Camera.
         self.mouseLook = FirstPersonCamera(self, self.cam, self.render)  
