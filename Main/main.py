@@ -25,8 +25,10 @@ class Application(ShowBase):
         taskMgr.add(me.move,"movement", extraArgs = [keys])
 
         # Loads everything here.
-        self.firstModel = self.loader.loadModel("models/dragontail.x")
+        #self.firstModel = self.loader.loadModel("models/babya.x")
         #self.firstTexture = self.loader.loadTexture("images/dragontail.tga")
+        self.firstModel = Actor("models/babya.x", {"Run":"models/babya.x"})
+        self.firstModel.loop("Run")
         
         # Load movie and its sound (if it has sound).
         self.movie = self.loader.loadTexture("videos/loading_screen.ogm")

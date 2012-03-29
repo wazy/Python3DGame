@@ -15,7 +15,7 @@ import sys
 
 class UserInputControl(DirectObject.DirectObject):
 	def __init__(self):
-                self.firstModel = Actor("models/proofOfConcept.egg", {"walk":"models/proofOfConcept.egg"})
+                self.firstModel = Actor("models/babya.x")#, {"walk":"models/proofOfConcept.egg"})
 
 ##	def acceptKeys(self):	
 ##		self.accept("w", self.setKey, ["mvUp", 1])
