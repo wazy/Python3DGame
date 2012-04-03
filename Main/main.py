@@ -27,7 +27,7 @@ class Application(ShowBase):
         # Loads everything here.
         #self.firstModel = self.loader.loadModel("models/babya.x")
         #self.firstTexture = self.loader.loadTexture("images/dragontail.tga")
-        self.firstModel = Actor("models/babya.x", {"Run":"models/babya.x"})
+        self.firstModel = Actor("./models/babya.x", {"Run":"./models/babya.x"})
         self.firstModel.loop("Run")
         
         # Load movie and its sound (if it has sound).
@@ -63,8 +63,7 @@ class Application(ShowBase):
         
 
         """ To do, add more commands """
-        #self.accept("escape", sys.exit)
-
+        #completed now to make it work??
 
         """ To do, implement text below model """
         #self.background_text = "Health"
@@ -87,6 +86,7 @@ class Application(ShowBase):
         # Loads and renders the model.
         self.background.removeNode()
         self.firstModel.reparentTo(self.render)
+        #self.setModelPosition()
         self.firstModel.setScale(0.75, 0.75, 0.75)
         self.firstModel.setPos(0, 50, 0)
         #self.firstModel.setTexture(self.firstTexture)
@@ -96,7 +96,8 @@ class Application(ShowBase):
         # Will stop the sound if the button is pressed.
         self.sound.stop()
 		
-		
+	#def setModelPosition(self, x=0, y=0, z=0):
+		#self.firstModel.setPos(x,y,z)	
     def loadImageAsPlane(self, task): 
 	# Loads image and puts it onscreen. 
         self.background = OnscreenImage(parent=render2d, image='images/Fireworks.jpg')

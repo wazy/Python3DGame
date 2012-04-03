@@ -3,7 +3,8 @@
 ##  3/22/12
 
 #from main import Application
-from direct.showbase.ShowBase import ShowBase
+#from direct.showbase.ShowBase import ShowBase
+#from other import model
 from direct.showbase import DirectObject
 from direct.task.Task import Task 
 from panda3d.core import *
@@ -40,6 +41,7 @@ class UserInputControl(DirectObject.DirectObject):
 	
 class Keys(DirectObject.DirectObject):
 	def __init__(self):
+		#App = Application()
 		self.isTyping = False
 		self.keyMap = {"left":0, "right":0, "forward":0, "back":0, "cam-right":0}
 		self.accept("escape", sys.exit)
@@ -54,4 +56,7 @@ class Keys(DirectObject.DirectObject):
 		
 	def setKey(self, key, value):
 		if not self.isTyping:
+			print "why did you call me? I serve no purpose, also you pressed %s \n" %key
 			self.keyMap[key] = value
+			#App.setModelPosition(x,50,z)
+			print self.keyMap
