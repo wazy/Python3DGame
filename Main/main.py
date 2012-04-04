@@ -20,9 +20,7 @@ class Application(ShowBase):
     def __init__(self):
         # Always add this!!! To load/render/etc.
         ShowBase.__init__(self)
-        me = UserInputControl()
         keys = Keys()
-        taskMgr.add(me.move,"movement", extraArgs = [keys])
 
         # Loads everything here.
         #self.firstModel = self.loader.loadModel("models/babya.x")
