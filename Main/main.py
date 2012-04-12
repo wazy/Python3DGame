@@ -12,7 +12,7 @@ from direct.gui.DirectGui import *
 from UserInputControl import *
 
 # Custom import.
-from FirstPersonCamera import FirstPersonCamera 
+from FirstPersonCamera import MouseLook
 
 import sys
 
@@ -20,13 +20,14 @@ class Application(ShowBase):
     def __init__(self):
         # Always add this!!! To load/render/etc.
         ShowBase.__init__(self)
-        keys = Keys()
-
-        # Loads everything here.
+        #keys = Keys()
+        #base.disableMouse() 
+        ## Loads everything here.
         #self.firstModel = self.loader.loadModel("models/babya.x")
         #self.firstTexture = self.loader.loadTexture("images/dragontail.tga")
+        #self.world = loader.loadModel("./models/world.bam")
         self.firstModel = Actor("./models/babya.x", {"Run":"./models/babya.x"})
-        self.firstModel.loop("Run")
+        self.secondModel = Actor("./models/babya.x", {"Run":"./models/babya.x"})
         
         # Load movie and its sound (if it has sound).
         self.movie = self.loader.loadTexture("videos/loading_screen.ogm")
@@ -38,7 +39,7 @@ class Application(ShowBase):
 
         # Render that plane to the render2d for Panda.
         self.plane = self.render2d.attachNewNode(self.cm.generate())
-
+        
         # Load movie into the texture plane.
         self.plane.setTexture(self.movie)
 
@@ -59,7 +60,6 @@ class Application(ShowBase):
         # Schedule bg image to show 10 seconds later.
         taskMgr.doMethodLater(1, self.loadImageAsPlane, "ImageLoader")
         
-
         """ To do, add more commands """
         #completed now to make it work??
 
@@ -68,6 +68,36 @@ class Application(ShowBase):
         #self.backgroundText = OnscreenText(self.background_text, pos = (0.95,-0.95) , 
                                      # scale = 0.07, fg = (1,0.5,0.5,1), align = TextNode.ACenter, 
                                      # mayChange = 1)
+                                     
+                                     
+        self.isTyping = False
+        self.keyMap = {"mvUp":0, "mvDown":0, "mvLeft":0, "mvRight":0}
+
+        self.accept("escape", sys.exit)
+		
+        self.accept("w", self.setKey, ["mvUp", 1])
+        self.accept("s", self.setKey, ["mvDown", 1])
+        self.accept("a", self.setKey, ["mvLeft", 1])
+        self.accept("d", self.setKey, ["mvRight", 1])
+
+        self.accept("w-up", self.setKey, ["mvUp", 0])
+        self.accept("s-up", self.setKey, ["mvDown", 0])
+        self.accept("a-up", self.setKey, ["mvLeft", 0])
+        self.accept("d-up", self.setKey, ["mvRight", 0])
+
+    def setKey(self, key, value):
+        if not self.isTyping:
+            if key == "mvUp" and value == 1:
+                self.firstModel.loop('Run', fromFrame = 0, toFrame = 20)
+                hello = self.firstModel.getX()
+                print "The x coordinate is now: ", hello
+                x = hello + 5
+                self.firstModel.setPos(x,0,0)
+            elif key == "mvUp" and value == 0:
+                self.firstModel.stop()
+                print "The w key was released."
+            else:
+				print "That key isn't supported yet."				
         
     def loadWorld(self):
         #self.background_text = "Thy journey has begun..."
@@ -80,17 +110,21 @@ class Application(ShowBase):
 
         # Set 3d background color.
         self.setBackgroundColor(0.5, 0.8, 0.8)
-
-        # Loads and renders the model.
+        
         self.background.removeNode()
+        
+        #self.world.reparentTo(self.render)
         self.firstModel.reparentTo(self.render)
-        #self.setModelPosition()
-        self.firstModel.setScale(0.75, 0.75, 0.75)
-        self.firstModel.setPos(0, 50, 0)
-        #self.firstModel.setTexture(self.firstTexture)
+        self.secondModel.reparentTo(self.render)
+        
+        self.firstModel.setScale(0.25, 0.25, 0.25)
+        self.secondModel.setScale(0.1, 0.1, 0.1)
+        
+        self.firstModel.setPos(0, 100, 0)
+        self.secondModel.setPos(20, 0, 0)
         
         # The Camera.
-        self.mouseLook = FirstPersonCamera(self, self.cam, self.render)  
+        self.mouseLook = MouseLook(base.cam)  
         # Will stop the sound if the button is pressed.
         self.sound.stop()
 		
