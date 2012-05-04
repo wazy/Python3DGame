@@ -1,5 +1,5 @@
 Make a GitHub account.
-sdfasdf
+
 http://code.google.com/p/msysgit/downloads/list
 
 #Download the first one, version 1.7.9
@@ -31,9 +31,10 @@ type: git config --global user.email youremail@youremail.com and press enter
 
 type: git clone git://github.com/wazy/Game.git and press enter
 
-then type: git remote add origin git@github.com:wazy/Game.git and press enter
-
 now type: cd Game and press enter
+
+
+then type: git remote set-url origin git@github.com:wazy/Game.git and press enter
 
 
 Commands you will need to add and update your files
