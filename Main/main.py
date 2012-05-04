@@ -70,7 +70,6 @@ class Application(ShowBase):
                                      # mayChange = 1)
                                      
                                      
-        self.isTyping = False
         self.keyMap = {"mvUp":0, "mvDown":0, "mvLeft":0, "mvRight":0}
 
         self.accept("escape", sys.exit)
@@ -84,20 +83,79 @@ class Application(ShowBase):
         self.accept("s-up", self.setKey, ["mvDown", 0])
         self.accept("a-up", self.setKey, ["mvLeft", 0])
         self.accept("d-up", self.setKey, ["mvRight", 0])
+        
+        taskMgr.add(self.move,"moveTask")
+
+        # Game state variables
+        self.isMoving = False
+
+        # Set up the camera
+        
+        base.disableMouse()
+        base.camera.setPos(self.firstModel.getX(),self.firstModel.getY()+10,2)
 
     def setKey(self, key, value):
-        if not self.isTyping:
-            if key == "mvUp" and value == 1:
+		self.keyMap[key] = value
+		#if (self.keyMap["forward"]!=0) or (self.keyMap["left"]!=0) or (self.keyMap["right"]!=0):
+            #if self.isMoving is False:
+                #self.firstModel.loop("run")
+                #self.isMoving = True
+        #else:
+            #if self.isMoving:
+                #self.firstModel.stop()
+                #self.firstModel.pose("walk",5)
+                #self.isMoving = False
+            #if key == "mvUp" and value == 1:
+                #self.firstModel.loop('Run', fromFrame = 0, toFrame = 20)
+                #hello = self.firstModel.getX()
+                #print "The x coordinate is now: ", hello
+                #x = hello + 5
+                #self.firstModel.setPos(x,0,0)
+            #elif key == "mvUp" and value == 0:
+                #self.firstModel.stop()
+                #print "The w key was released."
+            #else:
+				#print "That key isn't supported yet."				
+        
+        
+    def move(self, task):
+
+        # If the camera-left key is pressed, move camera left.
+        # If the camera-right key is pressed, move camera right.
+
+        #base.camera.lookAt(self.firstModel)
+
+        # save firstModel's initial position so that we can restore it,
+        # in case he falls off the map or runs into something.
+
+        startpos = self.firstModel.getPos()
+        print "Position is", startpos
+        # If a move-key is pressed, move firstModel in the specified direction.
+
+        if (self.keyMap["mvLeft"]!=0):
+            self.firstModel.setH(self.firstModel.getH() + 300 * globalClock.getDt())
+        if (self.keyMap["mvRight"]!=0):
+            self.firstModel.setH(self.firstModel.getH() - 300 * globalClock.getDt())
+        if (self.keyMap["mvUp"]!=0):
+            self.firstModel.setY(self.firstModel, + 25 * globalClock.getDt())
+        if (self.keyMap["mvDown"]!=0):
+            self.firstModel.setY(self.firstModel, - 25 * globalClock.getDt())
+
+        # If firstModel is moving, loop the run animation.
+        # If he is standing still, stop the animation.
+
+        if (self.keyMap["mvUp"]!=0) or (self.keyMap["mvLeft"]!=0) or (self.keyMap["mvRight"]!=0) or (self.keyMap["mvDown"]!=0):
+            if self.isMoving is False:
                 self.firstModel.loop('Run', fromFrame = 0, toFrame = 20)
-                hello = self.firstModel.getX()
-                print "The x coordinate is now: ", hello
-                x = hello + 5
-                self.firstModel.setPos(x,0,0)
-            elif key == "mvUp" and value == 0:
+                self.isMoving = True
+        else:
+            if self.isMoving:
                 self.firstModel.stop()
-                print "The w key was released."
-            else:
-				print "That key isn't supported yet."				
+                #self.firstModel.pose("stand",whatever frame to use here)
+                self.isMoving = False
+
+        return task.cont
+        
         
     def loadWorld(self):
         #self.background_text = "Thy journey has begun..."
