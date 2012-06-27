@@ -1,6 +1,6 @@
-## Version 0.01
-## Last change:
-## 21:40 3/22/2012
+## Daniel B.
+## Version 0.03
+## Last Revision 6/27/2012
 
 # Standard imports for Panda3d.
 from direct.showbase.ShowBase import ShowBase
@@ -19,9 +19,7 @@ import sys
 class Application(ShowBase):
     def __init__(self):
         # Always add this!!! To load/render/etc.
-        ShowBase.__init__(self)
-        #keys = Keys()
-        #base.disableMouse() 
+        ShowBase.__init__(self) 
         ## Loads everything here.
         #self.firstModel = self.loader.loadModel("models/babya.x")
         #self.firstTexture = self.loader.loadTexture("images/dragontail.tga")
@@ -29,6 +27,8 @@ class Application(ShowBase):
         self.firstModel = Actor("./models/babya.x", {"Run":"./models/babya.x"})
         self.secondModel = Actor("./models/babya.x", {"Run":"./models/babya.x"})
         
+        #self.firstModel = self.loader.loadModel("./models/babya.x")
+        #self.secondModel = self.loader.loadModel("./models/babya.x")
         # Load movie and its sound (if it has sound).
         self.movie = self.loader.loadTexture("videos/loading_screen.ogm")
         self.sound = self.loader.loadSfx("videos/loading_screen.ogm")
@@ -57,28 +57,22 @@ class Application(ShowBase):
         # Play the sound.
         self.sound.play()
 
-        # Schedule bg image to show 10 seconds later.
+        # Schedule bg image to show x seconds later.
         taskMgr.doMethodLater(1, self.loadImageAsPlane, "ImageLoader")
         
-        """ To do, add more commands """
-        #completed now to make it work??
-
-        """ To do, implement text below model """
-        #self.background_text = "Health"
-        #self.backgroundText = OnscreenText(self.background_text, pos = (0.95,-0.95) , 
-                                     # scale = 0.07, fg = (1,0.5,0.5,1), align = TextNode.ACenter, 
-                                     # mayChange = 1)
-                                     
-                                     
-        self.keyMap = {"mvUp":0, "mvDown":0, "mvLeft":0, "mvRight":0}
+        """ TODO: add more commands """
+                                                                          
+        self.keyMap = {"mvUp":0, "mvDown":0, "mvLeft":0, "mvRight":0, "shift1":0}
 
         self.accept("escape", sys.exit)
-		
+        
+        self.accept("shift", self.setKey, ["shift1", 1])
         self.accept("w", self.setKey, ["mvUp", 1])
         self.accept("s", self.setKey, ["mvDown", 1])
         self.accept("a", self.setKey, ["mvLeft", 1])
-        self.accept("d", self.setKey, ["mvRight", 1])
+        self.accept("d", self.setKey, ["mvRight", 1])	
 
+        self.accept("shift-up", self.setKey, ["shift1", 0])
         self.accept("w-up", self.setKey, ["mvUp", 0])
         self.accept("s-up", self.setKey, ["mvDown", 0])
         self.accept("a-up", self.setKey, ["mvLeft", 0])
@@ -86,61 +80,62 @@ class Application(ShowBase):
         
         taskMgr.add(self.move,"moveTask")
 
-        # Game state variables
+        # Moving variable.
         self.isMoving = False
-
-        # Set up the camera
         
-        base.disableMouse()
-        base.camera.setPos(self.firstModel.getX(),self.firstModel.getY()+10,2)
+        #base.disableMouse()
+        #camera.setPos(self.firstModel.getX(),self.firstModel.getY()+10,2)
+        
+        # Handle Collisions!
+        self.cTrav = CollisionTraverser()
+        collisionHandler = CollisionHandlerQueue()
+        firstCollide = self.firstModel.attachNewNode(CollisionNode('smile'))
+        firstCollide.node().addSolid(CollisionSphere(0,0,0,5))
+        self.cTrav.addCollider(firstCollide, collisionHandler)
+        smileyCollider = self.secondModel.attachNewNode(CollisionNode('smileycnode'))
+        smileyCollider.node().addSolid(CollisionSphere(0, 0, 0, 5))
+        self.cTrav.addCollider(smileyCollider, collisionHandler)
+        
+        
+        def traverseTask(task=None):
+  # as soon as a collison is detected, the collision queue handler will 
+  #contain all the objects taking part in the collison, but we must sort 
+  #that list first, so to have the first INTO object collided then the 
+  #second and so on. Of course here it is pretty useless 'cos there is 
+  #just one INTO object to collide with in the scene but this is the 
+  #way to go when there are many other.
+            collisionHandler.sortEntries()
+            for i in range(collisionHandler.getNumEntries()):
+                entry = collisionHandler.getEntry(i)
+                print "collision"
+                if task: return task.cont
+            if task: return task.cont
+        
+        #add the collision system to the task manager    
+        taskMgr.add(traverseTask, "tsk_traverse")
+        
+        #debugging purposes show collisions
+        self.cTrav.showCollisions(render)
 
     def setKey(self, key, value):
-		self.keyMap[key] = value
-		#if (self.keyMap["forward"]!=0) or (self.keyMap["left"]!=0) or (self.keyMap["right"]!=0):
-            #if self.isMoving is False:
-                #self.firstModel.loop("run")
-                #self.isMoving = True
-        #else:
-            #if self.isMoving:
-                #self.firstModel.stop()
-                #self.firstModel.pose("walk",5)
-                #self.isMoving = False
-            #if key == "mvUp" and value == 1:
-                #self.firstModel.loop('Run', fromFrame = 0, toFrame = 20)
-                #hello = self.firstModel.getX()
-                #print "The x coordinate is now: ", hello
-                #x = hello + 5
-                #self.firstModel.setPos(x,0,0)
-            #elif key == "mvUp" and value == 0:
-                #self.firstModel.stop()
-                #print "The w key was released."
-            #else:
-				#print "That key isn't supported yet."				
-        
+        self.keyMap[key] = value            
         
     def move(self, task):
 
-        # If the camera-left key is pressed, move camera left.
-        # If the camera-right key is pressed, move camera right.
-
-        #base.camera.lookAt(self.firstModel)
-
-        # save firstModel's initial position so that we can restore it,
-        # in case he falls off the map or runs into something.
-
-        startpos = self.firstModel.getPos()
-        print "Position is", startpos
+        camera.lookAt(self.firstModel)
         # If a move-key is pressed, move firstModel in the specified direction.
-
         if (self.keyMap["mvLeft"]!=0):
             self.firstModel.setH(self.firstModel.getH() + 300 * globalClock.getDt())
         if (self.keyMap["mvRight"]!=0):
             self.firstModel.setH(self.firstModel.getH() - 300 * globalClock.getDt())
         if (self.keyMap["mvUp"]!=0):
-            self.firstModel.setY(self.firstModel, + 25 * globalClock.getDt())
+            if self.keyMap["shift1"]!=0:
+                self.firstModel.setY(self.firstModel, + 50 * globalClock.getDt())
+            else:				
+                self.firstModel.setY(self.firstModel, + 25 * globalClock.getDt())
         if (self.keyMap["mvDown"]!=0):
             self.firstModel.setY(self.firstModel, - 25 * globalClock.getDt())
-
+        
         # If firstModel is moving, loop the run animation.
         # If he is standing still, stop the animation.
 
@@ -151,16 +146,17 @@ class Application(ShowBase):
         else:
             if self.isMoving:
                 self.firstModel.stop()
-                #self.firstModel.pose("stand",whatever frame to use here)
+                #self.firstModel.pose("stand", 0)
+                self.firstModel.loop('Run', fromFrame = 0, toFrame = 0)
                 self.isMoving = False
-
         return task.cont
-        
         
     def loadWorld(self):
         #self.background_text = "Thy journey has begun..."
-        #self.backgroundText.setText(self.background_text)
-
+        #self.background_text = "Health"
+        #self.backgroundText = OnscreenText(self.background_text, pos = (0.95,-0.95) , 
+        #                              scale = 0.07, fg = (1,0.5,0.5,1), align = TextNode.ACenter, 
+        #                              mayChange = 1)
         # Remove the buttons and the background image.
         self.newGameButton.destroy()
         self.loadSavedGameButton.destroy()
@@ -179,17 +175,15 @@ class Application(ShowBase):
         self.secondModel.setScale(0.1, 0.1, 0.1)
         
         self.firstModel.setPos(0, 100, 0)
-        self.secondModel.setPos(20, 0, 0)
+        self.secondModel.setPos(0, 120, 0)
         
         # The Camera.
-        self.mouseLook = MouseLook(base.cam)  
+        #self.mouseLook = MouseLook(base.cam)  
         # Will stop the sound if the button is pressed.
         self.sound.stop()
-		
-	#def setModelPosition(self, x=0, y=0, z=0):
-		#self.firstModel.setPos(x,y,z)	
+        
     def loadImageAsPlane(self, task): 
-	# Loads image and puts it onscreen. 
+    # Loads image and puts it onscreen. 
         self.background = OnscreenImage(parent=render2d, image='images/Fireworks.jpg')
 
         # Let's add a button..
