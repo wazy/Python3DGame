@@ -1,6 +1,6 @@
-## Daniel B.
-## Version 0.03
-## Last Revision 6/27/2012
+## Daniel B. / Warren E.
+## Version 0.04
+## Last Revision 7/8/2012
 
 # Standard imports for Panda3d.
 from direct.showbase.ShowBase import ShowBase
@@ -65,6 +65,7 @@ class Application(ShowBase):
         self.keyMap = {"mvUp":0, "mvDown":0, "mvLeft":0, "mvRight":0, "shift1":0}
 
         self.accept("escape", sys.exit)
+        self.accept("q", self.saveGame)
         
         self.accept("shift", self.setKey, ["shift1", 1])
         self.accept("w", self.setKey, ["mvUp", 1])
@@ -89,21 +90,17 @@ class Application(ShowBase):
         # Handle Collisions!
         self.cTrav = CollisionTraverser()
         collisionHandler = CollisionHandlerQueue()
-        firstCollide = self.firstModel.attachNewNode(CollisionNode('smile'))
-        firstCollide.node().addSolid(CollisionSphere(0,0,0,5))
-        self.cTrav.addCollider(firstCollide, collisionHandler)
-        smileyCollider = self.secondModel.attachNewNode(CollisionNode('smileycnode'))
-        smileyCollider.node().addSolid(CollisionSphere(0, 0, 0, 5))
-        self.cTrav.addCollider(smileyCollider, collisionHandler)
+        playerCollider = self.firstModel.attachNewNode(CollisionNode('player'))
+        playerCollider.node().addSolid(CollisionSphere(0,0,0,5))
+        self.cTrav.addCollider(playerCollider, collisionHandler)
+        objectCollider = self.secondModel.attachNewNode(CollisionNode('wall/object'))
+        objectCollider.node().addSolid(CollisionSphere(0, 0, 0, 5))
+        self.cTrav.addCollider(objectCollider, collisionHandler)
         
         
         def traverseTask(task=None):
-  # as soon as a collison is detected, the collision queue handler will 
-  #contain all the objects taking part in the collison, but we must sort 
-  #that list first, so to have the first INTO object collided then the 
-  #second and so on. Of course here it is pretty useless 'cos there is 
-  #just one INTO object to collide with in the scene but this is the 
-  #way to go when there are many other.
+			# handler contains all objects in collisions
+			# sort them first to find out first, second, etc
             collisionHandler.sortEntries()
             for i in range(collisionHandler.getNumEntries()):
                 entry = collisionHandler.getEntry(i)
@@ -117,11 +114,26 @@ class Application(ShowBase):
         #debugging purposes show collisions
         self.cTrav.showCollisions(render)
 
+    # called for modelLocation and returns a string 
+    # i.e. "0.0 100.0 0.0"
+    def modelLocation(self):
+        x = self.firstModel.getX()
+        y = self.firstModel.getY()
+        z = self.firstModel.getZ()
+        position = str(x) + " " + str(y) + " " + str(z)
+        return position
+    
+    # calls for position then writes the location    
+    def saveGame(self):
+        with open("SaveData.txt", "w") as save:
+            save.write(self.modelLocation())
+        save.close()
+        print "location saved", self.modelLocation()
+		
     def setKey(self, key, value):
         self.keyMap[key] = value            
         
     def move(self, task):
-
         camera.lookAt(self.firstModel)
         # If a move-key is pressed, move firstModel in the specified direction.
         if (self.keyMap["mvLeft"]!=0):
@@ -135,9 +147,7 @@ class Application(ShowBase):
                 self.firstModel.setY(self.firstModel, + 25 * globalClock.getDt())
         if (self.keyMap["mvDown"]!=0):
             self.firstModel.setY(self.firstModel, - 25 * globalClock.getDt())
-        print self.firstModel.getX()
-        print self.firstModel.getY()
-        print self.firstModel.getZ()
+
         # If firstModel is moving, loop the run animation.
         # If he is standing still, stop the animation.
 
@@ -153,7 +163,7 @@ class Application(ShowBase):
                 self.isMoving = False
         return task.cont
         
-    def loadWorld(self):
+    def loadNewWorld(self):
         #self.background_text = "Thy journey has begun..."
         #self.background_text = "Health"
         #self.backgroundText = OnscreenText(self.background_text, pos = (0.95,-0.95) , 
@@ -183,7 +193,8 @@ class Application(ShowBase):
         #self.mouseLook = MouseLook(base.cam)  
         # Will stop the sound if the button is pressed.
         self.sound.stop()
-    def loadWorld2(self):
+        
+    def loadSavedWorld(self):
         self.newGameButton.destroy()
         self.loadSavedGameButton.destroy()
         self.background.removeNode()
@@ -199,9 +210,11 @@ class Application(ShowBase):
         
         self.firstModel.setScale(0.25, 0.25, 0.25)
         self.secondModel.setScale(0.1, 0.1, 0.1)
+        
         with open('SaveData.txt') as f:
             for line in f:
                 int_list = [float(x) for x in line.split()]
+ 
         self.firstModel.setPos(int_list[0], int_list[1], int_list[2])
         self.secondModel.setPos(0, 120, 0)
         
@@ -216,10 +229,10 @@ class Application(ShowBase):
 
         # Let's add a button..
         self.newGameButton = DirectButton(text = ("New Game", None, None, None),
-                                   pressEffect = 1, scale = .05, command = self.loadWorld)
+                                   pressEffect = 1, scale = .05, command = self.loadNewWorld)
 
         self.loadSavedGameButton = DirectButton(text = ("Load Game", None, None, None),
-                                   pressEffect = 1, scale = .05, command = self.loadWorld2)
+                                   pressEffect = 1, scale = .05, command = self.loadSavedWorld)
         
         self.newGameButton.setPos(-1,1,-0.1)
         self.loadSavedGameButton.setPos(-1,1,-.2)
