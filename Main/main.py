@@ -135,7 +135,9 @@ class Application(ShowBase):
                 self.firstModel.setY(self.firstModel, + 25 * globalClock.getDt())
         if (self.keyMap["mvDown"]!=0):
             self.firstModel.setY(self.firstModel, - 25 * globalClock.getDt())
-        
+        print self.firstModel.getX()
+        print self.firstModel.getY()
+        print self.firstModel.getZ()
         # If firstModel is moving, loop the run animation.
         # If he is standing still, stop the animation.
 
@@ -181,6 +183,31 @@ class Application(ShowBase):
         #self.mouseLook = MouseLook(base.cam)  
         # Will stop the sound if the button is pressed.
         self.sound.stop()
+    def loadWorld2(self):
+        self.newGameButton.destroy()
+        self.loadSavedGameButton.destroy()
+        self.background.removeNode()
+
+        # Set 3d background color.
+        self.setBackgroundColor(0.5, 0.8, 0.8)
+        
+        self.background.removeNode()
+        
+        #self.world.reparentTo(self.render)
+        self.firstModel.reparentTo(self.render)
+        self.secondModel.reparentTo(self.render)
+        
+        self.firstModel.setScale(0.25, 0.25, 0.25)
+        self.secondModel.setScale(0.1, 0.1, 0.1)
+        with open('SaveData.txt') as f:
+            int_list = [float(x) for x in line.split()
+        self.firstModel.setPos(int_list[0], int_list[1], int_list[2])
+        self.secondModel.setPos(0, 120, 0)
+        
+        # The Camera.
+        #self.mouseLook = MouseLook(base.cam)  
+        # Will stop the sound if the button is pressed.
+        self.sound.stop()
         
     def loadImageAsPlane(self, task): 
     # Loads image and puts it onscreen. 
@@ -191,10 +218,10 @@ class Application(ShowBase):
                                    pressEffect = 1, scale = .05, command = self.loadWorld)
 
         self.loadSavedGameButton = DirectButton(text = ("Load Game", None, None, None),
-                                   pressEffect = 1, scale = .05, command = self.loadWorld)
+                                   pressEffect = 1, scale = .05, command = self.loadWorld2)
         
         self.newGameButton.setPos(-1,1,-0.1)
-        self.loadSavedGameButton.setPos(-1,1,-0.2)
+        self.loadSavedGameButton.setPos(-1,1,-.2)
         
         # Removes Intro Movie.
         self.plane.removeNode()
