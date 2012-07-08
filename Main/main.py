@@ -211,10 +211,11 @@ class Application(ShowBase):
         self.firstModel.setScale(0.25, 0.25, 0.25)
         self.secondModel.setScale(0.1, 0.1, 0.1)
         
-        with open('SaveData.txt') as f:
-            for line in f:
-                int_list = [float(x) for x in line.split()]
- 
+        with open('SaveData.txt') as load:
+            for line in load:
+                int_list = [float(x) for x in line.split()]        
+        load.close()
+        
         self.firstModel.setPos(int_list[0], int_list[1], int_list[2])
         self.secondModel.setPos(0, 120, 0)
         
