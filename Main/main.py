@@ -10,12 +10,15 @@ from direct.gui.OnscreenImage import OnscreenImage
 from direct.gui.OnscreenText import OnscreenText
 from direct.gui.DirectGui import *
 from UserInputControl import *
+from panda3d.ai import *
+from direct.gui.OnscreenText import OnscreenText
 
 # Custom import.
 from FirstPersonCamera import MouseLook
 
 import sys
 
+pursue = True
 class Application(ShowBase):
     def __init__(self):
         # Always add this!!! To load/render/etc.
@@ -26,13 +29,12 @@ class Application(ShowBase):
         #self.world = loader.loadModel("./models/world.bam")
         self.firstModel = Actor("./models/babya.x", {"Run":"./models/babya.x"})
         self.secondModel = Actor("./models/babya.x", {"Run":"./models/babya.x"})
-        
         #self.firstModel = self.loader.loadModel("./models/babya.x")
         #self.secondModel = self.loader.loadModel("./models/babya.x")
         # Load movie and its sound (if it has sound).
         self.movie = self.loader.loadTexture("videos/loading_screen.ogm")
         self.sound = self.loader.loadSfx("videos/loading_screen.ogm")
-
+        self.health = 100
         # Make a plane to play the movie on.
         self.cm = CardMaker("plane")
         self.cm.setFrame(-1, 1, -1, 1)
@@ -83,7 +85,6 @@ class Application(ShowBase):
 
         # Moving variable.
         self.isMoving = False
-        
         #base.disableMouse()
         #camera.setPos(self.firstModel.getX(),self.firstModel.getY()+10,2)
         
@@ -104,7 +105,18 @@ class Application(ShowBase):
             collisionHandler.sortEntries()
             for i in range(collisionHandler.getNumEntries()):
                 entry = collisionHandler.getEntry(i)
-                print "collision"
+                print "collision", self.health
+                alive = False
+                if (self.health > 0):
+                    alive = True
+                if (alive):	
+                    self.health = self.health - 1
+                    self.addState(0.9, "Collision, your hp is: " + str(self.health))
+                else:
+					self.addState(0.9, "You are dead.")
+					self.firstModel.loop('Run', fromFrame = 60, toFrame = 70)
+					self.AIbehaviors.evade(self.firstModel)
+					pursue = False
                 if task: return task.cont
             if task: return task.cont
         
@@ -133,9 +145,16 @@ class Application(ShowBase):
     def setKey(self, key, value):
         self.keyMap[key] = value            
         
+    def addState(self, pos, msg):
+        return OnscreenText(text=msg, style=1, fg=(1,1,1,1), font = loader.loadFont("cmss12"),
+                            pos=(-1.3, pos), align=TextNode.ALeft, scale = .1)
     def move(self, task):
         camera.lookAt(self.firstModel)
         # If a move-key is pressed, move firstModel in the specified direction.
+        ##TODO better movement
+        startPos = self.firstModel.getPos()
+        #if (self.keyMap["mvLeft"]!=0):
+            #self.firstModel.setPos(startPos + Point3(-0.75,0,0))
         if (self.keyMap["mvLeft"]!=0):
             self.firstModel.setH(self.firstModel.getH() + 300 * globalClock.getDt())
         if (self.keyMap["mvRight"]!=0):
@@ -187,12 +206,15 @@ class Application(ShowBase):
         self.secondModel.setScale(0.1, 0.1, 0.1)
         
         self.firstModel.setPos(0, 100, 0)
-        self.secondModel.setPos(0, 120, 0)
+        self.secondModel.setPos(100, -120, 0)
         
         # The Camera.
         #self.mouseLook = MouseLook(base.cam)  
         # Will stop the sound if the button is pressed.
         self.sound.stop()
+        
+        #ai
+        self.setAI()
         
     def loadSavedWorld(self):
         self.newGameButton.destroy()
@@ -224,6 +246,9 @@ class Application(ShowBase):
         # Will stop the sound if the button is pressed.
         self.sound.stop()
         
+        #ai
+        self.setAI()
+        
     def loadImageAsPlane(self, task): 
     # Loads image and puts it onscreen. 
         self.background = OnscreenImage(parent=render2d, image='images/Fireworks.jpg')
@@ -240,6 +265,27 @@ class Application(ShowBase):
         
         # Removes Intro Movie.
         self.plane.removeNode()
+
+    def setAI(self):
+        #Creating AI World
+        self.AIworld = AIWorld(render)
+ 
+        self.AIchar = AICharacter("seeker",self.secondModel, 100, 0.05, 5)
+        self.AIworld.addAiChar(self.AIchar)
+        self.AIbehaviors = self.AIchar.getAiBehaviors()
+        
+        #currently pursues the player.
+        if (pursue):
+            self.AIbehaviors.pursue(self.firstModel)
+        self.secondModel.loop('Run', fromFrame = 0, toFrame = 20)
+ 
+        #AI World update        
+        taskMgr.add(self.AIUpdate,"AIUpdate")
+         
+    #to update the AIWorld    
+    def AIUpdate(self,task):
+        self.AIworld.update()            
+        return Task.cont
         
 # Assign the class to a variable.        
 app = Application()
