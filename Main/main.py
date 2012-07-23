@@ -73,7 +73,7 @@ class Application(ShowBase):
         self.accept("w", self.setKey, ["mvUp", 1])
         self.accept("s", self.setKey, ["mvDown", 1])
         self.accept("a", self.setKey, ["mvLeft", 1])
-        self.accept("d", self.setKey, ["mvRight", 1])    
+        self.accept("d", self.setKey, ["mvRight", 1])
 
         self.accept("shift-up", self.setKey, ["shift1", 0])
         self.accept("w-up", self.setKey, ["mvUp", 0])
@@ -109,13 +109,12 @@ class Application(ShowBase):
                 alive = False
                 if (self.health > 0):
                     alive = True
-                if (alive):    
+                if (alive):
                     self.health = self.health - 1
                     self.addState(0.9, "Collision, your hp is: " + str(self.health))
                 else:
                     self.addState(0.9, "You are dead.")
-                    self.firstModel.loop('Run', fromFrame = 60, toFrame = 70)
-                    pursue = False
+                    self.firstModel.loop('Run', fromFrame = 75, toFrame = 80)
                 if task: return task.cont
             if task: return task.cont
         
@@ -140,7 +139,7 @@ class Application(ShowBase):
             save.write(self.modelLocation())
         save.close()
         print "location saved", self.modelLocation()
-        
+
     def setKey(self, key, value):
         self.keyMap[key] = value            
         
@@ -166,7 +165,7 @@ class Application(ShowBase):
         if (self.keyMap["mvUp"]!=0):
             if self.keyMap["shift1"]!=0:
                 self.firstModel.setY(self.firstModel, + 50 * globalClock.getDt())
-            else:                
+            else:
                 self.firstModel.setY(self.firstModel, + 25 * globalClock.getDt())
         if (self.keyMap["mvDown"]!=0):
             self.firstModel.setY(self.firstModel, - 25 * globalClock.getDt())
@@ -210,7 +209,7 @@ class Application(ShowBase):
         self.secondModel.setScale(0.1, 0.1, 0.1)
         
         self.firstModel.setPos(0, 100, 0)
-        self.secondModel.setPos#FFFFFF(100, -120, 0)
+        self.secondModel.setPos(100, -120, 0)
         
         # The Camera.
         #self.mouseLook = MouseLook(base.cam)  
