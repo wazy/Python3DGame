@@ -1,9 +1,8 @@
-## Daniel B. / Warren E.
-## Version 0.04
-## Last Revision 7/8/2012
+## Daniel B.
+## Version 0.05
+## Last Revision 1/15/2013
 
 # Standard imports for Panda3d.
-from direct.showbase.ShowBase import ShowBase
 from direct.task.Task import Task 
 from panda3d.core import *
 from direct.gui.OnscreenImage import OnscreenImage
@@ -12,6 +11,12 @@ from direct.gui.DirectGui import *
 from UserInputControl import *
 from panda3d.ai import *
 from direct.gui.OnscreenText import OnscreenText
+ 
+import direct.directbase.DirectStart
+from pandac.PandaModules import *
+ 
+from direct.showbase.DirectObject import DirectObject
+
 
 # Custom import.
 from FirstPersonCamera import MouseLook
@@ -19,12 +24,21 @@ from FirstPersonCamera import MouseLook
 import sys
 
 pursue = True
-class Application(ShowBase):
+class Application(DirectObject):
     def __init__(self):
-        # Always add this!!! To load/render/etc.
-        ShowBase.__init__(self) 
+        
+        traverser = CollisionTraverser()
+        
+        base.physics = PhysicsCollisionHandler()
+        base.physics.addInPattern("%fn-into%in")
+        base.physics.addOutPattern("%fn-out-%in")
+        base.enableParticles()
+        
+       # player = Player()
+       # player.setCollision(traverser)
+       
         ## Loads everything here.
-        #self.firstModel = self.loader.loadModel("models/babya.x")
+        #self.firstModel1 = self.loader.loadModel("models/fig.obj")
         #self.firstTexture = self.loader.loadTexture("images/dragontail.tga")
         #self.world = loader.loadModel("./models/world.bam")
         self.firstModel = Actor("./models/babya.x", {"Run":"./models/babya.x"})
@@ -32,15 +46,15 @@ class Application(ShowBase):
         #self.firstModel = self.loader.loadModel("./models/babya.x")
         #self.secondModel = self.loader.loadModel("./models/babya.x")
         # Load movie and its sound (if it has sound).
-        self.movie = self.loader.loadTexture("videos/loading_screen.ogm")
-        self.sound = self.loader.loadSfx("videos/loading_screen.ogm")
+        self.movie = base.loader.loadTexture("videos/loading_screen.ogm")
+        self.sound = base.loader.loadSfx("videos/loading_screen.ogm")
         self.health = 100
         # Make a plane to play the movie on.
         self.cm = CardMaker("plane")
         self.cm.setFrame(-1, 1, -1, 1)
 
         # Render that plane to the render2d for Panda.
-        self.plane = self.render2d.attachNewNode(self.cm.generate())
+        self.plane = base.render2d.attachNewNode(self.cm.generate())
         
         # Load movie into the texture plane.
         self.plane.setTexture(self.movie)
@@ -113,8 +127,10 @@ class Application(ShowBase):
                     self.health = self.health - 1
                     self.addState(0.9, "Collision, your hp is: " + str(self.health))
                 else:
-                    self.addState(0.9, "You are dead.")
-                    self.firstModel.loop('Run', fromFrame = 75, toFrame = 80)
+                    self.addState(0.9, "You have died.")
+                    self.firstModel.play('Death', fromFrame = 306, toFrame = 327)
+                    self.AIbehaviors.wander(5, 0, 10, 1.0)
+                    self.AIworld.update()   
                 if task: return task.cont
             if task: return task.cont
         
@@ -149,7 +165,6 @@ class Application(ShowBase):
         self.text = OnscreenText(text=msg, style=1, fg=(1,1,1,1), font = loader.loadFont("cmss12"),
                             pos=(-1.3, pos), align=TextNode.ALeft, scale = .1)
         return self.text
-                            
 
     def move(self, task):
         camera.lookAt(self.firstModel)
@@ -159,16 +174,16 @@ class Application(ShowBase):
         #if (self.keyMap["mvLeft"]!=0):
             #self.firstModel.setPos(startPos + Point3(-0.75,0,0))
         if (self.keyMap["mvLeft"]!=0):
-            self.firstModel.setH(self.firstModel.getH() + 300 * globalClock.getDt())
+            self.firstModel.setH(self.firstModel.getH() + 450 * globalClock.getDt())
         if (self.keyMap["mvRight"]!=0):
-            self.firstModel.setH(self.firstModel.getH() - 300 * globalClock.getDt())
+            self.firstModel.setH(self.firstModel.getH() - 450 * globalClock.getDt())
         if (self.keyMap["mvUp"]!=0):
             if self.keyMap["shift1"]!=0:
-                self.firstModel.setY(self.firstModel, + 50 * globalClock.getDt())
+                self.firstModel.setY(self.firstModel, + 150 * globalClock.getDt())
             else:
-                self.firstModel.setY(self.firstModel, + 25 * globalClock.getDt())
+                self.firstModel.setY(self.firstModel, + 100 * globalClock.getDt())
         if (self.keyMap["mvDown"]!=0):
-            self.firstModel.setY(self.firstModel, - 25 * globalClock.getDt())
+            self.firstModel.setY(self.firstModel, - 75 * globalClock.getDt())
 
         # If firstModel is moving, loop the run animation.
         # If he is standing still, stop the animation.
@@ -181,7 +196,7 @@ class Application(ShowBase):
             if self.isMoving:
                 self.firstModel.stop()
                 #self.firstModel.pose("stand", 0)
-                self.firstModel.loop('Run', fromFrame = 0, toFrame = 0)
+                self.firstModel.loop('Stand', fromFrame = 22, toFrame = 52)
                 self.isMoving = False
         return task.cont
         
@@ -197,14 +212,15 @@ class Application(ShowBase):
         self.background.removeNode()
 
         # Set 3d background color.
-        self.setBackgroundColor(0.5, 0.8, 0.8)
+        base.setBackgroundColor(0.5, 0.8, 0.8)
         
         self.background.removeNode()
         
         #self.world.reparentTo(self.render)
-        self.firstModel.reparentTo(self.render)
-        self.secondModel.reparentTo(self.render)
         
+        self.firstModel.reparentTo(base.render)
+        self.secondModel.reparentTo(base.render)
+
         self.firstModel.setScale(0.25, 0.25, 0.25)
         self.secondModel.setScale(0.1, 0.1, 0.1)
         
@@ -225,7 +241,7 @@ class Application(ShowBase):
         self.background.removeNode()
 
         # Set 3d background color.
-        self.setBackgroundColor(0.5, 0.8, 0.8)
+        base.setBackgroundColor(0.5, 0.8, 0.8)
         
         self.background.removeNode()
         
@@ -281,7 +297,7 @@ class Application(ShowBase):
         #if (pursue):
         self.AIbehaviors.pursue(self.firstModel, 0.2)
         #else:
-        self.AIbehaviors.evade(self.firstModel, 15, 80, 0.8)
+       # self.AIbehaviors.evade(self.firstModel, 15, 80, 0.8)
             
         self.secondModel.loop('Run', fromFrame = 0, toFrame = 20)
  
@@ -296,4 +312,4 @@ class Application(ShowBase):
 # Assign the class to a variable.        
 app = Application()
 # And finally, run it!!
-app.run()
+run()
