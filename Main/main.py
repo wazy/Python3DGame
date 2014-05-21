@@ -246,8 +246,8 @@ class Application(DirectObject):
         self.background.removeNode()
         
         #self.world.reparentTo(self.render)
-        self.firstModel.reparentTo(self.render)
-        self.secondModel.reparentTo(self.render)
+        self.firstModel.reparentTo(base.render)
+        self.secondModel.reparentTo(base.render)
         
         self.firstModel.setScale(0.25, 0.25, 0.25)
         self.secondModel.setScale(0.1, 0.1, 0.1)
